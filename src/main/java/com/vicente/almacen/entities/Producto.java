@@ -1,7 +1,7 @@
 package com.vicente.almacen.entities;
 
 import com.vicente.almacen.enums.Categoria;
-import com.vicente.almacen.exceptions.DatoInvalidoExceptions;
+import com.vicente.almacen.exceptions.DatoInvalidoException;
 import com.vicente.almacen.utils.StringCustomUtils;
 import com.vicente.almacen.utils.ValoresNumericosUtils;
 import jakarta.persistence.*;
@@ -46,11 +46,11 @@ public class Producto {
                 "El nombre es requerido y debe tener entre 5 y 30 caracteres");
 
         if (categoria == null) {
-            throw new DatoInvalidoExceptions("La categoria es requerida");
+            throw new DatoInvalidoException("La categoria es requerida");
         }
 
         if (precio == null || precio.compareTo(BigDecimal.ZERO) < 0) {
-            throw new DatoInvalidoExceptions(
+            throw new DatoInvalidoException(
                     "El precio es requerido y no puede ser negativo");
         }
 
@@ -84,7 +84,7 @@ public class Producto {
                 "La cantidad debe ser positiva");
 
         if (cantidad > this.cantidad) {
-            throw new DatoInvalidoExceptions(
+            throw new DatoInvalidoException(
                     "La cantidad debe ser menor o igual a la cantidad actual");
         }
 

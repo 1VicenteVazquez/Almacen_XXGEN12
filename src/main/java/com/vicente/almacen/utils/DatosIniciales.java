@@ -1,8 +1,10 @@
 package com.vicente.almacen.utils;
 
 import com.vicente.almacen.entities.Producto;
+import com.vicente.almacen.entities.Sucursal;
 import com.vicente.almacen.enums.Categoria;
 import com.vicente.almacen.repositories.ProductoRepository;
+import com.vicente.almacen.repositories.SucursalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +19,7 @@ import java.util.List;
 public class DatosIniciales implements CommandLineRunner {
 
     private final ProductoRepository productoRepository;
+    private final SucursalRepository sucursalRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -24,7 +27,6 @@ public class DatosIniciales implements CommandLineRunner {
         if (productoRepository.count() == 0) {
 
             productoRepository.saveAll(List.of(
-
                     new Producto(
                             null,
                             "Laptop Gamer",
@@ -47,7 +49,29 @@ public class DatosIniciales implements CommandLineRunner {
                             10)
             ));
 
-            log.info("Datos iniciales cargados");
+            log.info("Productos de prueba cargados correctamente");
+        }
+
+        if (sucursalRepository.count() == 0) {
+
+            sucursalRepository.saveAll(List.of(
+                    new Sucursal(
+                            null,
+                            "Sucursal Norte",
+                            "Av. Norte"),
+
+                    new Sucursal(
+                            null,
+                            "Sucursal Centro",
+                            "Av. Centro"),
+
+                    new Sucursal(
+                            null,
+                            "Sucursal Sur",
+                            "Av. Sur")
+            ));
+
+            log.info("Sucursales de prueba cargadas correctamente");
         }
     }
 }
