@@ -1,12 +1,12 @@
 package com.vicente.almacen.utils;
 
-import com.vicente.almacen.exceptions.DatoInvalidoExceptions;
+import com.vicente.almacen.exceptions.DatoInvalidoException;
 
 public class StringCustomUtils {
 
     public static void validarNoVacio(String texto, String mensaje) {
         if (texto == null || texto.isBlank()) {
-            throw new DatoInvalidoExceptions(mensaje);
+            throw new DatoInvalidoException(mensaje);
         }
     }
 
@@ -15,7 +15,7 @@ public class StringCustomUtils {
         validarNoVacio(texto, mensaje);
 
         if (texto.length() < min || texto.length() > max) {
-            throw new DatoInvalidoExceptions(mensaje);
+            throw new DatoInvalidoException(mensaje);
         }
     }
 

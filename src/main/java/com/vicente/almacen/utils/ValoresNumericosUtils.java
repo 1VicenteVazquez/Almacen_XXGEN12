@@ -1,6 +1,6 @@
 package com.vicente.almacen.utils;
 
-import com.vicente.almacen.exceptions.DatoInvalidoExceptions;
+import com.vicente.almacen.exceptions.DatoInvalidoException;
 
 import java.math.BigDecimal;
 
@@ -8,7 +8,7 @@ public class ValoresNumericosUtils {
 
     public static <N extends Number> void validarNumeroRequerido(N numero, String mensaje) {
         if (numero == null) {
-            throw new DatoInvalidoExceptions(mensaje);
+            throw new DatoInvalidoException(mensaje);
         }
     }
 
@@ -17,7 +17,7 @@ public class ValoresNumericosUtils {
         validarNumeroRequerido(numero, mensaje);
 
         if (numero <= 0) {
-            throw new DatoInvalidoExceptions(mensaje);
+            throw new DatoInvalidoException(mensaje);
         }
     }
 
@@ -26,7 +26,7 @@ public class ValoresNumericosUtils {
         validarNumeroRequerido(numero, mensaje);
 
         if (numero.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new DatoInvalidoExceptions(mensaje);
+            throw new DatoInvalidoException(mensaje);
         }
     }
 }

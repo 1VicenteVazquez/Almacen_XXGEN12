@@ -1,19 +1,20 @@
 package com.vicente.almacen.controllers;
 
+import com.vicente.almacen.dto.ProblemaDoc;
 import com.vicente.almacen.dto.productos.ProductoRequest;
 import com.vicente.almacen.dto.productos.ProductoResponse;
 import com.vicente.almacen.services.productos.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -22,88 +23,91 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
-@Validated
-@Tag(name = "API Productos", description = "Gestion de inventario de productos")
+@Tag(name = "Productos", description = "Gestión del inventario de productos")
+// Errores que pueden ocurrir en cualquier endpoint:
+@ApiResponse(responseCode = "400", description = "Datos o parámetros inválidos",
+        content = @Content(mediaType = "application/problem+json",
+                schema = @Schema(implementation = ProblemaDoc.class)))
+@ApiResponse(responseCode = "500", description = "Error interno del servidor",
+        content = @Content(mediaType = "application/problem+json",
+                schema = @Schema(implementation = ProblemaDoc.class)))
 public class ProductoController {
 
     private final ProductoService productoService;
 
     @GetMapping
-    @Operation(summary = "Listar productos", description = "Todos los filtros son opcionales")
+    @Operation(summary = "Listar prouctos", description = "Todos los filtros son opcionales")
     @ApiResponse(responseCode = "200", description = "Listado obtenido")
     public ResponseEntity<List<ProductoResponse>> listar(
-
-            @Parameter(description = "Busqueda por nombre", example = "Laptop")
+            @Parameter(description = "Búsqueda por nombre", example = "Laptop")
             @RequestParam(required = false) String nombre,
 
-            @Parameter(description = "Busqueda por categoria", example = "Electronica")
+            @Parameter(description = "Búsqueda por categoría", example = "Electrónico")
             @RequestParam(required = false) String categoria,
 
-            @Parameter(description = "Busqueda por precio minimo", example = "1000")
+            @Parameter(description = "Búqueda por precio mínimo", example = "1000")
             @RequestParam(required = false) BigDecimal precioMin,
 
-            @Parameter(description = "Busqueda por precio maximo", example = "20000")
+            @Parameter(description = "Búsqueda por precio máximo", example = "2000")
             @RequestParam(required = false) BigDecimal precioMax
-    ) {
-        return ResponseEntity.ok(
-                productoService.listar(nombre, categoria, precioMin, precioMax));
+    ){
+        return  ResponseEntity.ok(productoService.listar(nombre, categoria, precioMin, precioMax));
     }
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener producto por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
-            @ApiResponse(responseCode = "404", description = "El producto no existe")
-    })
+    @ApiResponse(responseCode = "200", description = "Producto encontrdo")
+    @ApiResponse(responseCode = "404", description = "El producto no existe",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> obtenerPorId(
-
             @Parameter(description = "ID del producto", example = "1")
             @PathVariable @Positive(message = "El ID debe ser positivo") Long id
-    ) {
-        return ResponseEntity.ok(productoService.obtenerPorId(id));
+
+    ){
+        return  ResponseEntity.ok(productoService.obtenerPorId(id));
     }
+
 
     @PostMapping
     @Operation(summary = "Registrar un nuevo producto")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Producto creado"),
-            @ApiResponse(responseCode = "400", description = "Datos invalidos")
-    })
+    @ApiResponse(responseCode = "201", description = "Producto registrado")
     public ResponseEntity<ProductoResponse> registrar(
             @Valid @RequestBody ProductoRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productoService.registrar(request));
+    ){
+        return ResponseEntity.status(HttpStatus.CREATED).body(productoService.registrar(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto existente")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Producto actualizado"),
-            @ApiResponse(responseCode = "404", description = "El producto no existe")
-    })
+    @ApiResponse(responseCode = "201", description = "Producto actualizado")
+    @ApiResponse(responseCode = "409", description = "Conflicto con datos existentes",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> actualizar(
 
             @Parameter(description = "ID del producto", example = "1")
-            @PathVariable @Positive(message = "El ID debe ser positivo") Long id,
+            @PathVariable @Positive(message = "El ID debe ser postivo") Long id,
 
-            @Valid @RequestBody ProductoRequest request
-    ) {
+            @Valid  @RequestBody ProductoRequest request
+    ){
         return ResponseEntity.ok(productoService.actualizar(request, id));
     }
 
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Producto eliminado"),
-            @ApiResponse(responseCode = "404", description = "El producto no existe")
-    })
-    public ResponseEntity<Void> eliminar(
-
+    @ApiResponse(responseCode = "201", description = "Producto eliminado")
+    @ApiResponse(responseCode = "409", description = "El producto está en uso y no puede eliminarse",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
+    public ResponseEntity<ProductoResponse> eliminar(
             @Parameter(description = "ID del producto", example = "1")
-            @PathVariable @Positive(message = "El ID debe ser positivo") Long id
-    ) {
+            @PathVariable @Positive(message = "El ID deber ser positivo") Long id
+    ){
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
 }

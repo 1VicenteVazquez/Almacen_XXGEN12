@@ -1,6 +1,6 @@
 package com.vicente.almacen.enums;
 
-import com.vicente.almacen.exceptions.DatoInvalidoExceptions;
+import com.vicente.almacen.exceptions.DatoInvalidoException;
 import com.vicente.almacen.utils.StringCustomUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public enum Categoria {
             }
         }
 
-        throw new DatoInvalidoExceptions(
+        throw new DatoInvalidoException(
                 "No existe una categoria con la descripcion: " + descripcion);
     }
 }
