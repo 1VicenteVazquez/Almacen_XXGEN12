@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/productos")
-@RequiredArgsConstructor
-@Tag(name = "Productos", description = "Gestión del inventario de productos")
+@RestController //convierta la clase en un controlador web
+@RequestMapping("/api/productos")  //define la url base
+@RequiredArgsConstructor //cosntructor para atributos final asi se hace la iyeccion de dependencias
+@Tag //-agrupa todos los endpoints (swagger)
+        (name = "Productos", description = "Gestión del inventario de productos")
 // Errores que pueden ocurrir en cualquier endpoint:
 @ApiResponse(responseCode = "400", description = "Datos o parámetros inválidos",
         content = @Content(mediaType = "application/problem+json",
@@ -35,14 +36,15 @@ public class ProductoController {
 
     private final ProductoService productoService;
 
-    @GetMapping
+    @GetMapping //consultar leer datos
     @Operation(summary = "Listar prouctos", description = "Todos los filtros son opcionales")
     @ApiResponse(responseCode = "200", description = "Listado obtenido")
     public ResponseEntity<List<ProductoResponse>> listar(
             @Parameter(description = "Búsqueda por nombre", example = "Laptop")
-            @RequestParam(required = false) String nombre,
+            @RequestParam  //captura parametros opcionales  ?
+                    (required = false) String nombre,
 
-            @Parameter(description = "Búsqueda por categoría", example = "Electrónico")
+            @Parameter(description = "Búsqueda por categoría", example = "Electrónica")
             @RequestParam(required = false) String categoria,
 
             @Parameter(description = "Búqueda por precio mínimo", example = "1000")
@@ -51,7 +53,8 @@ public class ProductoController {
             @Parameter(description = "Búsqueda por precio máximo", example = "2000")
             @RequestParam(required = false) BigDecimal precioMax
     ){
-        return  ResponseEntity.ok(productoService.listar(nombre, categoria, precioMin, precioMax));
+        return  ResponseEntity.ok //devuelve el cofigo junto con los datos
+                (productoService.listar(nombre, categoria, precioMin, precioMax));
     }
 
 
@@ -63,23 +66,26 @@ public class ProductoController {
                     schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> obtenerPorId(
             @Parameter(description = "ID del producto", example = "1")
-            @PathVariable @Positive(message = "El ID debe ser positivo") Long id
+            @PathVariable   //captura el numero dentro de las llaves de la url
+            @Positive(message = "El ID debe ser positivo") Long id
 
     ){
         return  ResponseEntity.ok(productoService.obtenerPorId(id));
     }
 
 
-    @PostMapping
+    @PostMapping //crear registrar productos nuevos
     @Operation(summary = "Registrar un nuevo producto")
     @ApiResponse(responseCode = "201", description = "Producto registrado")
     public ResponseEntity<ProductoResponse> registrar(
-            @Valid @RequestBody ProductoRequest request
+            @Valid //-activa el filtro de seguridad revisa las reglas antes descritas
+            @RequestBody  //toma el cuerpo json compleeto del json y lo mete dentro de wel recod
+            ProductoRequest request
     ){
         return ResponseEntity.status(HttpStatus.CREATED).body(productoService.registrar(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //actualiar recurso existente
     @Operation(summary = "Actualizar un producto existente")
     @ApiResponse(responseCode = "201", description = "Producto actualizado")
     @ApiResponse(responseCode = "409", description = "Conflicto con datos existentes",
@@ -96,7 +102,7 @@ public class ProductoController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // borrar recurso
     @Operation(summary = "Eliminar un producto")
     @ApiResponse(responseCode = "201", description = "Producto eliminado")
     @ApiResponse(responseCode = "409", description = "El producto está en uso y no puede eliminarse",
@@ -107,7 +113,8 @@ public class ProductoController {
             @PathVariable @Positive(message = "El ID deber ser positivo") Long id
     ){
         productoService.eliminar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent() //estandar profesional al crear algo nuevo
+                .build();
     }
 
 }

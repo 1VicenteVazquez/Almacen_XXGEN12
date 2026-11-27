@@ -1,13 +1,16 @@
 package com.vicente.almacen.entities;
 
 import com.vicente.almacen.exceptions.DatoInvalidoException;
+import com.vicente.almacen.utils.ValoresNumericosUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
 
 import java.math.BigDecimal;
+import java.net.PortUnreachableException;
 
 @Entity
 @Table(name = "DETALLE_VENTA")
@@ -41,5 +44,26 @@ public class DetalleVenta {
             throw new DatoInvalidoException("La venta es requerida");
         }
         this.venta = venta;
+    }
+
+    public static DetalleVenta crear(Producto producto, Integer cantidad){
+        if (producto==null){
+            throw new DatoInvalidoException("El producto es requerido");
+        }
+        ValoresNumericosUtils.validarEnteroPositivo(cantidad, "Cantidad debe ser positiva");
+
+        return DetalleVenta.builder()
+                .producto(producto)
+                .cantidadProducto(cantidad)
+                .precioProducto(producto.getPrecio()) //fotagrafia el producto
+                .build();
+    }
+
+    public BigDecimal subtotal(){
+        return precioProducto.multiply(BigDecimal.valueOf(cantidadProducto));
+    }
+
+    public BigDecimal getS() {
+        return null;
     }
 }

@@ -12,27 +12,28 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Entity
+@Entity  //Le dine a java que esta clase no es solo codigo si no que representa una tabla
 @Table(name = "PRODUCTOS")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
+@NoArgsConstructor  //crea en automatico un constructor vacio new Producto() para que JPA pueda leer ña tabla
+@AllArgsConstructor   //crea un constructor con todos los campos includos
+@Builder  //permite crea los objetos de forma limpia y legible  crear()
+@Getter  //crea en automatico todos los metodos get, getNombre
 public class Producto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_PRODUCTO")
+    @Id //marca el atributo como PK
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  //equivale a un AUTO INCREMENT
+    @Column(name = "ID_PRODUCTO") //COLUMNA
     private Long id;
 
-    @Column(name = "NOMBRE", length = 30, nullable = false)
+    @Column(name = "NOMBRE", length = 30, nullable = false) // NULLABLE EQUIVALE A NOT NULL
     private String nombre;
 
     @Column(name = "CATEGORIA", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) //guarda el nombre contextual de una enumeracion de Java Een una columna de bd
     private Categoria categoria;
 
-    @Column(name = "PRECIO", nullable = false, precision = 10, scale = 2)
+    @Column(name = "PRECIO", nullable = false, precision =
+            10, scale = 2) //equivale a decimales (12345678.99)
     private BigDecimal precio;
 
     @Column(name = "CANTIDAD", nullable = false)
