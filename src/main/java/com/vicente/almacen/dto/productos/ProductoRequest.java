@@ -9,7 +9,8 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Schema(description = "Datos necesarios para crear o actualizar un producto")
-public record ProductoRequest(
+public record  //transporta datos de forma inmutable
+ProductoRequest(
 
         @Schema(description = "Nombre del producto", example = "Laptop Gamer")
         @NotBlank(message = "El nombre es requerido")
@@ -18,7 +19,8 @@ public record ProductoRequest(
 
         @Schema(description = "Categoria del producto (puede estar en mayusculas o minusculas)",
                 example = "Electronica",
-                allowableValues = {
+                allowableValues //crea una lista deplegable o muestra las opciones validas
+                        = {
                         "ALIMENTO",
                         "HIGIENE",
                         "JUGUETE",
@@ -32,7 +34,7 @@ public record ProductoRequest(
 
         @Schema(description = "Precio del producto", example = "15999.99")
         @NotNull(message = "El precio es requerido")
-        @Positive(message = "El precio debe ser positivo")
+        @Positive(message = "El precio debe ser positivo") //valida >0
         BigDecimal precio,
 
         @Schema(description = "Cantidad disponible del producto", example = "300")
@@ -41,3 +43,6 @@ public record ProductoRequest(
         Integer cantidad
 ) {
 }
+
+
+//ProductoRequest es el formulario temporal para recibir los datos del usuario, y Producto es el registro oficial que se guarda para siempre en tu base de datos.

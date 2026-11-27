@@ -4,10 +4,14 @@ import com.vicente.almacen.dto.productos.ProductoRequest;
 import com.vicente.almacen.dto.productos.ProductoResponse;
 import com.vicente.almacen.entities.Producto;
 import com.vicente.almacen.enums.Categoria;
+import com.vicente.almacen.exceptions.DatoInvalidoException;
+import com.vicente.almacen.exceptions.RecursoNoEncontradoException;
 import com.vicente.almacen.mappers.ProductoMapper;
 import com.vicente.almacen.repositories.ProductoRepository;
+import com.vicente.almacen.repositories.ProductoSpecifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +33,22 @@ public class ProductoServiceImpl implements ProductoService {
             String nombre, String categoria,
             BigDecimal precioMin, BigDecimal precioMax) {
 
-        log.info("Listando todos los productos......");
+        log.info("Listando todos los productos --> nombre:{}, categoria:{}, precioMin: {}, precioMax {}", nombre, categoria, precioMin, precioMax );
 
-        return productoRepository.findAll().stream()
+        // Validación de negocio
+        if (precioMin != null && precioMax != null && precioMin.compareTo(precioMax)>0 ) {
+            throw new DatoInvalidoException("El precio minimo no puede ser mayor al precio maximo");
+        }
+
+        // Convertir el texto de categoría a enum (solo si viene)
+        Categoria categoriaFiltro = (categoria == null || categoria.isBlank())
+                ? null
+                : Categoria.obtenerCategoriaPorDescripcion(categoria.trim());
+
+        Specification<Producto> filtros=
+                ProductoSpecifications.conFiltros(nombre, categoriaFiltro, precioMin, precioMax);
+
+        return productoRepository.findAll(filtros).stream()
                 .map(productoMapper::entidadAResponse)
                 .toList();
     }
@@ -89,7 +106,7 @@ public class ProductoServiceImpl implements ProductoService {
         log.info("Buscando producto con id: {}", id);
 
         return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Producto no encontrado con id: " + id));
     }
 }

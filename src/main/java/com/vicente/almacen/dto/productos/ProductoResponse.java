@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 @Schema(description = "Informacion de un producto")
-public record ProductoResponse(
+public record ProductoResponse( //clase compacta e inmutable
 
         @Schema(description = "ID unico del producto", example = "1")
-        Long id,
+        Long id, //espacio reservado para el numero de folio gigante y unico del producto
 
         @Schema(description = "Nombre del producto", example = "Laptop Gamer")
         String nombre,

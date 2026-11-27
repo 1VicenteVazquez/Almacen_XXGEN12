@@ -6,7 +6,8 @@ import com.vicente.almacen.dto.productos.ProductoResponse;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface ProductoService {
+public interface  //INTERFACE definen un contrato  con las funciones exactas que declaremos
+ProductoService {
 
     List<ProductoResponse> listar(
             String nombre, String categoria,

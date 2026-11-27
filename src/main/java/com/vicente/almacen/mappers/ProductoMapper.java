@@ -6,7 +6,7 @@ import com.vicente.almacen.entities.Producto;
 import com.vicente.almacen.enums.Categoria;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component //le dice a spring crea una instacia de la clase automaticamente y la guarda para que otra clase pueda usarla
 public class ProductoMapper {
 
     public Producto requestAEntidad(ProductoRequest request, Categoria categoria) {
